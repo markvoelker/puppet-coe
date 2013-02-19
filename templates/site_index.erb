@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title><%= build_node_name %>: Cisco OpenStack Edition</title>
+    </head>
+    <body>
+        <h1>Management links for <%= build_node_name %> COE cluster</h1>
+        <p>
+        Horizon, the web interface to OpenStack: <a href="http://<%= controller_hostname %>/horizon">http://<%= controller_hostname %>/horizon</a><br>
+
+        Nagios, cluster health and status monitoring: <a href="http://<%= build_node_name %>/nagios3">http://<%= build_node_name %>/nagios3</a><br>
+
+        Graphite, statistics and performance monitoring: <a href="http://<%= build_node_name %>:8190/">http://<%= build_node_name %>:8190/</a><br>
+
+        RabbitMQ, statistics and performance of RabbitMQ: <a href="http://<%= controller_hostname %>:15672/">http://<%= controller_hostname %>:15672/</a><br>
+        
+        Dashboard, overview of Puppet status: <a href="http://<%= build_node_name %>:82/">http://<%= build_node_name %>:82/</a><br>
+    </body>
+</html>
