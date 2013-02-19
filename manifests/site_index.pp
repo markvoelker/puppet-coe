@@ -13,4 +13,11 @@ class coe::site_index {
         content => template("coe/site_index.erb"),
     }
 
+    file { "/var/www/header-logo.png":
+        ensure => file,
+        mode   => 0644,
+        owner  => root,
+        group  => root,
+        source => "puppet:///modules/coe/header-logo.png",
+    }
 }
