@@ -30,8 +30,8 @@ class coe::ceph::compute(
 
   exec { 'get-or-set volumes key':
     command => "ceph auth get-or-create client.volumes mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=${poolname}' > /etc/ceph/client.volumes",
-    require => [ Package['ceph'], Ceph::Key['admin'] ],
     creates => "/etc/ceph/client.volumes",
+    require => [ Package['ceph'], Ceph::Key['admin'] ],
   }
 
   exec { 'install key in cinder.conf':
