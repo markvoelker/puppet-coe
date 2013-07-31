@@ -20,7 +20,9 @@ class coe::ceph::compute(
   }
 
   class { 'ceph::conf':
-    fsid => $fsid,
+    fsid      => $fsid,
+    conf_owner => 'cinder',
+    conf_group => 'cinder',
   }
 
   file { '/etc/ceph/secret.xml':
@@ -31,9 +33,8 @@ class coe::ceph::compute(
   file { '/etc/ceph/uuid_injection.sh':
     content => template('coe/uuid_injection.erb'),
     mode    => 0750,
-    require => Exec['get-or-set volumes key'],
+    require => Exec['create the pool'],
   }
-
 
   exec { 'get-or-set volumes key':
     command => "ceph auth get-or-create client.volumes mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=${poolname}' > /etc/ceph/client.volumes",
@@ -59,9 +60,8 @@ class coe::ceph::compute(
   exec { 'install key in cinder.conf':
     command => '/etc/ceph/uuid_injection.sh',
     provider => shell,
-    require  => [ File['/etc/ceph/uuid_injection.sh'], Exec['create the pool'] ],
+    require  => File['/etc/ceph/uuid_injection.sh'],
     notify  => [ Service['cinder-volume'], Service['nova-compute'] ],
   }
 
 }
-
