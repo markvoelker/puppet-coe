@@ -33,7 +33,7 @@ class coe::ceph::compute(
   file { '/etc/ceph/uuid_injection.sh':
     content => template('coe/uuid_injection.erb'),
     mode    => 0750,
-    require => Exec['create the pool'],
+    require => Exec['get-or-set volumes key'],
   }
 
   exec { 'get-or-set volumes key':
@@ -60,7 +60,7 @@ class coe::ceph::compute(
   exec { 'install key in cinder.conf':
     command => '/etc/ceph/uuid_injection.sh',
     provider => shell,
-    require  => File['/etc/ceph/uuid_injection.sh'],
+    require  => [ File['/etc/ceph/uuid_injection.sh'], Exec['create the pool'] ],
     notify  => [ Service['cinder-volume'], Service['nova-compute'] ],
   }
 
