@@ -24,19 +24,20 @@ class coe::ceph::compute(
   }
 
   file { '/etc/ceph/secret.xml':
-    content => template('ceph/secret.xml-compute.erb'),
+    content => template('coe/secret.xml-compute.erb'),
     require => Package['ceph-common'],
   }
 
-  exec { 'get-or-set volumes key':
-    command => "ceph auth get-or-create client.volumes mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=${poolname}' > /etc/ceph/client.volumes",
-    creates => "/etc/ceph/client.volumes",
-    require => [ Package['ceph'], Ceph::Key['admin'] ],
+  file { '/etc/ceph/uuid_injection.sh':
+    content => template('coe/uuid_injection.erb'),
+    mode    => 0750,
+    require => Exec['get-or-set volumes key'],
   }
 
-  exec { 'install key in cinder.conf':
-    command => 'export key="ceph auth get-key client.volumes" && sed -i "s/REPLACEME/$key/g" /etc/cinder/cinder-volume.conf',
-    require => Exec['get-or-set volumes key'],
+
+  exec { 'get-or-set volumes key':
+    command => "ceph auth get-or-create client.volumes mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=${poolname}' > /etc/ceph/client.volumes",
+    require => [ Package['ceph'], Ceph::Key['admin'] ],
   }
 
   exec { 'get-or-set virsh secret':
@@ -52,8 +53,14 @@ class coe::ceph::compute(
 
   exec { 'create the pool':
     command => "ceph osd pool create volumes 128",
-    unless  => "/usr/bin/rados lspools | grep volumes",
     require => Exec['set-secret-value virsh'],
+  }
+
+  exec { 'install key in cinder.conf':
+    command => '/etc/ceph/uuid_injection.sh',
+    provider => shell,
+    require  => [ File['/etc/ceph/uuid_injection.sh'], Exec['create the pool'] ],
+    notify  => [ Service['cinder-volume'], Service['nova-compute'] ],
   }
 
 }
