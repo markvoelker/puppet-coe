@@ -43,7 +43,7 @@ class coe::ceph::compute(
   }
 
   exec { 'get-or-set virsh secret':
-    command => '/usr/bin/virsh secret-define --file secret.xml | /usr/bin/awk \'{print $2}\' | sed \'/^$/d\' > /etc/ceph/virsh.secret',
+    command => '/usr/bin/virsh secret-define --file /etc/ceph/secret.xml | /usr/bin/awk \'{print $2}\' | sed \'/^$/d\' > /etc/ceph/virsh.secret',
     creates => "/etc/ceph/virsh.secret",
     require => [ Package['ceph'], Ceph::Key['admin'], File['/etc/ceph/secret.xml'] ],
   }
