@@ -36,6 +36,19 @@ class coe::ceph::compute(
     require => Exec['get-or-set volumes key'],
   }
 
+  file { '/etc/ceph/client.admin':
+    ensure => present,
+    owner => 'cinder',
+    group => 'cinder',
+    mode  => '660',
+    require => Exec['copy the admin key to make cinder work'],
+  }
+  
+  exec { 'copy the admin key to make cinder work':
+    command => 'cp /etc/ceph/keyring /etc/ceph/client.admin',
+    creates => '/etc/ceph/client.admin',
+  }
+
   exec { 'get-or-set volumes key':
     command => "/usr/bin/ceph auth get-or-create client.volumes mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=${poolname}' > /etc/ceph/client.volumes",
     creates => "/etc/ceph/client.volumes",
