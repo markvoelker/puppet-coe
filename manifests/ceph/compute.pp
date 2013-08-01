@@ -37,7 +37,8 @@ class coe::ceph::compute(
   }
 
   exec { 'get-or-set volumes key':
-    command => "ceph auth get-or-create client.volumes mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=${poolname}' > /etc/ceph/client.volumes",
+    command => "/usr/bin/ceph auth get-or-create client.volumes mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=${poolname}' > /etc/ceph/client.volumes",
+    creates => "/etc/ceph/client.volumes",
     require => [ Package['ceph'], Ceph::Key['admin'] ],
   }
 
@@ -48,12 +49,13 @@ class coe::ceph::compute(
   }
 
   exec { 'set-secret-value virsh':
-    command => "virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key client.volumes)",
+    command => "/usr/bin/virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key client.volumes)",
     require => Exec['get-or-set virsh secret'],
   }
 
   exec { 'create the pool':
-    command => "ceph osd pool create volumes 128",
+    command => "/usr/bin/ceph osd pool create volumes 128",
+    unless  => "/usr/bin/rados lspools | grep -sq volumes",
     require => Exec['set-secret-value virsh'],
   }
 
