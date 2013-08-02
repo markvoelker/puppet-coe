@@ -18,6 +18,10 @@ class coe::ceph::compute(
     ensure => present,
     require => Apt::Source['ceph'],
   }
+ 
+  package { 'sysfsutils':
+    ensure => present,
+  }
 
   class { 'ceph::conf':
     fsid      => $fsid,
