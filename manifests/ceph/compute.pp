@@ -43,6 +43,12 @@ class coe::ceph::compute(
     mode  => '660',
     require => Exec['copy the admin key to make cinder work'],
   }
+
+  file { '/etc/ceph/keyring':
+    owner => 'cinder',
+    group => 'cinder',
+    mode  => 0600,
+  }
   
   exec { 'copy the admin key to make cinder work':
     command => 'cp /etc/ceph/keyring /etc/ceph/client.admin',
