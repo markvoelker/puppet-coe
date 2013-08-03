@@ -4,11 +4,6 @@ class coe::ceph::control(
   
 ) {
 
-  class { 'glance::backend::rbd':
-    rbd_store_user => $glance_store_user,
-    rbd_store_pool => $glance_store_pool,
-  }
-
   include 'ceph::package'
 
   Package['ceph'] -> Ceph::Key <<| title == 'admin' |>>
