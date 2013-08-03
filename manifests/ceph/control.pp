@@ -1,8 +1,4 @@
-class coe::ceph::control(
-  $glance_store_user = 'admin',
-  $glance_store_pool = 'images',
-  
-) {
+class coe::ceph::control() {
 
   include 'ceph::package'
 
