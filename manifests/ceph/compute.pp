@@ -10,12 +10,12 @@ class coe::ceph::compute(
   class { 'ceph::apt::ceph': release => $::ceph_release }
 
   package { 'ceph-common':
-    ensure => present,
+    ensure  => present,
     require => Apt::Source['ceph'],
   }
 
   package { 'python-ceph':
-    ensure => present,
+    ensure  => present,
     require => Apt::Source['ceph'],
   }
  
@@ -24,7 +24,7 @@ class coe::ceph::compute(
   }
 
   class { 'ceph::conf':
-    fsid      => $fsid,
+    fsid => $fsid,
   }
 
   file { '/etc/ceph/secret.xml':
@@ -73,10 +73,10 @@ class coe::ceph::compute(
   }
 
   exec { 'install key in cinder.conf':
-    command => '/etc/ceph/uuid_injection.sh',
+    command  => '/etc/ceph/uuid_injection.sh',
     provider => shell,
     require  => [ File['/etc/ceph/uuid_injection.sh'], Exec['create the pool'] ],
-    notify  => [ Service['cinder-volume'], Service['nova-compute'] ],
+    notify   => [ Service['cinder-volume'], Service['nova-compute'] ],
   }
 
 }
