@@ -15,22 +15,16 @@ class coe::ceph::control(
 
   class { 'ceph::conf':
     fsid      => $fsid,
-    conf_owner => 'glance',
-    conf_group => 'glance',
   }
 
   file { '/etc/ceph/client.admin':
-    ensure => present,
-    owner => 'glance',
-    group => 'glance',
-    mode  => '660',
+    ensure  => present,
+    mode    => 0644,
     require => Exec['copy the admin key to make glance work'],
   }
 
   file { '/etc/ceph/keyring':
-    owner => 'glance',
-    group => 'glance',
-    mode  => 0600,
+    mode  => 0644,
   }
 
   exec { 'copy the admin key to make glance work':

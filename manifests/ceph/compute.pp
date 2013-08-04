@@ -39,8 +39,8 @@ class coe::ceph::compute(
   }
 
   file { '/etc/ceph/client.admin':
-    ensure => present,
-    mode  => '644',
+    ensure  => present,
+    mode    => 0644,
     require => Exec['copy the admin key to make cinder work'],
   }
 
