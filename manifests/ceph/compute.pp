@@ -25,8 +25,6 @@ class coe::ceph::compute(
 
   class { 'ceph::conf':
     fsid      => $fsid,
-    conf_owner => 'cinder',
-    conf_group => 'cinder',
   }
 
   file { '/etc/ceph/secret.xml':
@@ -42,16 +40,12 @@ class coe::ceph::compute(
 
   file { '/etc/ceph/client.admin':
     ensure => present,
-    owner => 'cinder',
-    group => 'cinder',
-    mode  => '660',
+    mode  => '644',
     require => Exec['copy the admin key to make cinder work'],
   }
 
   file { '/etc/ceph/keyring':
-    owner => 'cinder',
-    group => 'cinder',
-    mode  => 0600,
+    mode  => 0644,
   }
   
   exec { 'copy the admin key to make cinder work':
