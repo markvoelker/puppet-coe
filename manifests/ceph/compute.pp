@@ -44,10 +44,11 @@ class coe::ceph::compute(
     require => Exec['copy the admin key to make cinder work'],
   }
 
-  file { '/etc/ceph/keyring':
-    mode  => 0644,
+   file { '/etc/ceph/keyring':
+    mode    => 0644,
+    require => Exec['copy the admin key to make cinder work'],
   }
-  
+ 
   exec { 'copy the admin key to make cinder work':
     command => 'cp /etc/ceph/keyring /etc/ceph/client.admin',
     creates => '/etc/ceph/client.admin',
