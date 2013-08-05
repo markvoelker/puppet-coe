@@ -23,8 +23,8 @@ class coe::ceph::compute(
     ensure => present,
   }
 
-  class { 'ceph::conf':
-    fsid => $fsid,
+  if !$::osd_on_compute {
+    class { 'ceph::conf': fsid => $fsid }
   }
 
   file { '/etc/ceph/secret.xml':
