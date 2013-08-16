@@ -13,10 +13,6 @@ class coe::ceph::control(
     require => Apt::Source['ceph'],
   }
 
-  class { 'ceph::conf':
-    fsid      => $fsid,
-  }
-
   file { '/etc/ceph/client.admin':
     ensure  => present,
     mode    => 0644,
@@ -31,7 +27,7 @@ class coe::ceph::control(
   exec { 'copy the admin key to make glance work':
     command => 'cp /etc/ceph/keyring /etc/ceph/client.admin',
     creates => '/etc/ceph/client.admin',
-    require => [ Package['ceph'], Ceph::Key['admin'] ],
+    require => Package['ceph'],
   }
 
   exec { 'create the pool':
