@@ -17,15 +17,21 @@ class coe::ceph::control(
       class { 'ceph::conf': fsid => $fsid }
   }
 
+  $ceph_admin_key = $::controller_has_mon ? {
+    true    => 'ceph-admin-key',
+    false   => 'copy the admin key',
+    default => 'copy the admin key',
+  }
+
   file { '/etc/ceph/client.admin':
     ensure  => present,
     mode    => 0644,
-    require => Exec['copy the admin key'],
+    require => Exec[$ceph_admin_key],
   }
 
   file { '/etc/ceph/keyring':
     mode    => 0644,
-    require => Exec['copy the admin key'],
+    require => Exec[$ceph_admin_key],
   }
 
   exec { 'copy the admin key':
@@ -38,7 +44,7 @@ class coe::ceph::control(
     exec { 'create the pool':
       command => "/usr/bin/ceph osd pool create ${::glance_ceph_pool} 128",
       unless  => "/usr/bin/rados lspools | grep -sq ${::glance_ceph_pool}",
-      require => Exec['copy the admin key'],
+      require => Exec[$ceph_admin_key],
       notify  => [ Service['glance-api'], Service['glance-registry'] ],
     }
   }
