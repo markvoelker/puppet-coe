@@ -13,6 +13,10 @@ class coe::ceph::control(
     require => Apt::Source['ceph'],
   }
 
+  if !$::controller_has_mon {
+      class { 'ceph::conf': fsid => $fsid }
+  }
+
   file { '/etc/ceph/client.admin':
     ensure  => present,
     mode    => 0644,
